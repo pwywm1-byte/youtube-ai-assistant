@@ -86,6 +86,23 @@ class ElevenLabsHandler:
             output_file.write(response.content)
         return output_path
 
-    def generate_voice(self, text: str, output_path: str, voice_id: Optional[str] = None) -> str:
+    def generate_voice(
+        self,
+        text: str,
+        output_path: str,
+        voice_id: Optional[str] = None,
+        stability: float = 0.5,
+        similarity_boost: float = 0.75,
+        style: float = 0.0,
+        use_speaker_boost: bool = True,
+    ) -> str:
         """Alias for text_to_speech."""
-        return self.text_to_speech(text=text, output_path=output_path, voice_id=voice_id)
+        return self.text_to_speech(
+            text=text,
+            output_path=output_path,
+            voice_id=voice_id,
+            stability=stability,
+            similarity_boost=similarity_boost,
+            style=style,
+            use_speaker_boost=use_speaker_boost,
+        )

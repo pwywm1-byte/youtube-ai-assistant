@@ -102,6 +102,7 @@ class GoogleAuthManager:
                 "project_id": project_id,
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
+                "redirect_uris": ["http://localhost"],
             }
         }
 
