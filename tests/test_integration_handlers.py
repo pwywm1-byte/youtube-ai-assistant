@@ -69,25 +69,25 @@ class IntegrationHandlersTestCase(unittest.TestCase):
 
     def test_elevenlabs_text_to_speech_requires_voice_id(self):
         handler = ElevenLabsHandler(api_key="test-key", voice_id=None)
-        with self.assertRaises(ValueError):
-            with tempfile.NamedTemporaryFile(delete=False) as tmp:
-                output_path = tmp.name
-            try:
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            output_path = tmp.name
+        try:
+            with self.assertRaises(ValueError):
                 handler.text_to_speech("hello", output_path)
-            finally:
-                if os.path.exists(output_path):
-                    os.remove(output_path)
+        finally:
+            if os.path.exists(output_path):
+                os.remove(output_path)
 
     def test_elevenlabs_text_to_speech_requires_text(self):
         handler = ElevenLabsHandler(api_key="test-key", voice_id="voice-1")
-        with self.assertRaises(ValueError):
-            with tempfile.NamedTemporaryFile(delete=False) as tmp:
-                output_path = tmp.name
-            try:
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            output_path = tmp.name
+        try:
+            with self.assertRaises(ValueError):
                 handler.text_to_speech("   ", output_path)
-            finally:
-                if os.path.exists(output_path):
-                    os.remove(output_path)
+        finally:
+            if os.path.exists(output_path):
+                os.remove(output_path)
 
 
 if __name__ == "__main__":
