@@ -94,6 +94,9 @@ class YouTubeHandler:
 
     def list_playlists(self, channel_id: Optional[str] = None, max_results: int = 50) -> List[Dict[str, Any]]:
         """List playlists for a channel."""
+        if max_results < 1 or max_results > 50:
+            raise ValueError("max_results must be between 1 and 50.")
+
         target_channel = channel_id or self.channel_id
         if not target_channel:
             raise ValueError("YOUTUBE_CHANNEL_ID is not set.")

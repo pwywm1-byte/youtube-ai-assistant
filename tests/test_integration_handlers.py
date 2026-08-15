@@ -48,6 +48,11 @@ class IntegrationHandlersTestCase(unittest.TestCase):
         self.assertEqual(YouTubeHandler._channel_filters("@test_channel"), {"forHandle": "@test_channel"})
         self.assertEqual(YouTubeHandler._channel_filters("UC123"), {"id": "UC123"})
 
+    def test_youtube_handler_rejects_invalid_playlist_page_size(self):
+        handler = YouTubeHandler(credentials=object())
+        with self.assertRaises(ValueError):
+            handler.list_playlists(channel_id="UC123", max_results=51)
+
     @mock.patch("elevenlabs_handler.requests.post")
     def test_elevenlabs_text_to_speech_writes_output(self, mock_post):
         mock_response = mock.Mock()
@@ -68,26 +73,28 @@ class IntegrationHandlersTestCase(unittest.TestCase):
                 os.remove(output_path)
 
     def test_elevenlabs_text_to_speech_requires_voice_id(self):
-        handler = ElevenLabsHandler(api_key="test-key", voice_id=None)
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            output_path = tmp.name
-        try:
-            with self.assertRaises(ValueError):
-                handler.text_to_speech("hello", output_path)
-        finally:
-            if os.path.exists(output_path):
-                os.remove(output_path)
+        with mock.patch.dict(os.environ, {}, clear=True):
+            handler = ElevenLabsHandler(api_key="test-key", voice_id=None)
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                output_path = tmp.name
+            try:
+                with self.assertRaises(ValueError):
+                    handler.text_to_speech("hello", output_path)
+            finally:
+                if os.path.exists(output_path):
+                    os.remove(output_path)
 
     def test_elevenlabs_text_to_speech_requires_text(self):
-        handler = ElevenLabsHandler(api_key="test-key", voice_id="voice-1")
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            output_path = tmp.name
-        try:
-            with self.assertRaises(ValueError):
-                handler.text_to_speech("   ", output_path)
-        finally:
-            if os.path.exists(output_path):
-                os.remove(output_path)
+        with mock.patch.dict(os.environ, {}, clear=True):
+            handler = ElevenLabsHandler(api_key="test-key", voice_id="voice-1")
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                output_path = tmp.name
+            try:
+                with self.assertRaises(ValueError):
+                    handler.text_to_speech("   ", output_path)
+            finally:
+                if os.path.exists(output_path):
+                    os.remove(output_path)
 
 
 if __name__ == "__main__":
