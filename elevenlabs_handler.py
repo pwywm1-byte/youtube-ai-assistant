@@ -34,11 +34,14 @@ class ElevenLabsHandler:
             "Content-Type": "application/json",
         }
 
+    def _auth_headers(self) -> Dict[str, str]:
+        return {"xi-api-key": self.api_key}
+
     def list_voices(self) -> Dict[str, Any]:
         """List voices available on the ElevenLabs account."""
         response = requests.get(
             f"{self.base_url}/voices",
-            headers={"xi-api-key": self.api_key},
+            headers=self._auth_headers(),
             timeout=self.timeout,
         )
         response.raise_for_status()

@@ -64,6 +64,8 @@ class GoogleAuthManager:
 
         if credentials and credentials.expired and credentials.refresh_token:
             credentials.refresh(Request())
+            with open(self.token_file, "w", encoding="utf-8") as token:
+                token.write(credentials.to_json())
         elif not credentials or not credentials.valid:
             if not os.path.exists(self.client_secrets_file):
                 raise FileNotFoundError(

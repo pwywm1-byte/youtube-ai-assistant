@@ -14,7 +14,7 @@ DATABASE_POOL_SIZE=20
 REDIS_URL=redis://localhost:6379/0
 
 # YouTube API
-GOOGLE_CLOUD_PROJECT_ID=project-4afc96f3-507d-4bec-ae6
+GOOGLE_CLOUD_PROJECT_ID=your_google_cloud_project_id
 GOOGLE_OAUTH_CLIENT_SECRETS_FILE=client_secret.json
 GOOGLE_OAUTH_TOKEN_FILE=token.json
 GOOGLE_SERVICE_ACCOUNT_FILE=service-account.json
@@ -24,7 +24,7 @@ YOUTUBE_API_VERSION=v3
 
 YOUTUBE_CLIENT_ID=your_client_id
 YOUTUBE_CLIENT_SECRET=your_client_secret
-YOUTUBE_CHANNEL_ID=@pwywm
+YOUTUBE_CHANNEL_ID=@your_channel_handle
 YOUTUBE_REFRESH_TOKEN=your_refresh_token
 
 # OpenAI
