@@ -19,7 +19,7 @@ class IntegrationHandlersTestCase(unittest.TestCase):
                 "GOOGLE_OAUTH_CLIENT_SECRETS_FILE": "client_secret.json",
                 "GOOGLE_SERVICE_ACCOUNT_FILE": "service-account.json",
                 "GOOGLE_OAUTH_SCOPES": "scope-a,scope-b",
-                "YOUTUBE_CHANNEL_ID": "@pwywm",
+                "YOUTUBE_CHANNEL_ID": "@test_channel",
             },
             clear=False,
         ):
@@ -28,7 +28,7 @@ class IntegrationHandlersTestCase(unittest.TestCase):
             self.assertEqual(settings.GOOGLE_OAUTH_CLIENT_SECRETS_FILE, "client_secret.json")
             self.assertEqual(settings.GOOGLE_SERVICE_ACCOUNT_FILE, "service-account.json")
             self.assertEqual(settings.GOOGLE_OAUTH_SCOPES, "scope-a,scope-b")
-            self.assertEqual(settings.YOUTUBE_CHANNEL_ID, "@pwywm")
+            self.assertEqual(settings.YOUTUBE_CHANNEL_ID, "@test_channel")
 
     def test_google_auth_reads_scopes_from_env(self):
         with mock.patch.dict(
@@ -44,7 +44,7 @@ class IntegrationHandlersTestCase(unittest.TestCase):
             self.assertIn("ELEVENLABS_API_KEY", str(error.exception))
 
     def test_youtube_handler_channel_filter_for_handle(self):
-        self.assertEqual(YouTubeHandler._channel_filters("@pwywm"), {"forHandle": "@pwywm"})
+        self.assertEqual(YouTubeHandler._channel_filters("@test_channel"), {"forHandle": "@test_channel"})
         self.assertEqual(YouTubeHandler._channel_filters("UC123"), {"id": "UC123"})
 
 

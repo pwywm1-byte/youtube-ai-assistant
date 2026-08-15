@@ -7,11 +7,11 @@ import os
 from typing import List, Optional
 
 
-DEFAULT_SCOPES = (
-    "https://www.googleapis.com/auth/youtube.upload,"
-    "https://www.googleapis.com/auth/youtube.readonly,"
-    "https://www.googleapis.com/auth/youtube"
-)
+DEFAULT_SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.readonly",
+    "https://www.googleapis.com/auth/youtube",
+]
 
 
 class GoogleAuthManager:
@@ -33,7 +33,7 @@ class GoogleAuthManager:
 
     @staticmethod
     def _scopes_from_env() -> List[str]:
-        raw = os.getenv("GOOGLE_OAUTH_SCOPES", DEFAULT_SCOPES)
+        raw = os.getenv("GOOGLE_OAUTH_SCOPES", ",".join(DEFAULT_SCOPES))
         return [scope.strip() for scope in raw.split(",") if scope.strip()]
 
     def load_service_account_credentials(self, scopes: Optional[List[str]] = None):
@@ -63,17 +63,23 @@ class GoogleAuthManager:
             credentials = Credentials.from_authorized_user_file(self.token_file, selected_scopes)
 
         if credentials and credentials.expired and credentials.refresh_token:
-            credentials.refresh(Request())
-            with open(self.token_file, "w", encoding="utf-8") as token:
-                token.write(credentials.to_json())
+            try:
+                credentials.refresh(Request())
+                with open(self.token_file, "w", encoding="utf-8") as token:
+                    token.write(credentials.to_json())
+            except Exception:
+                credentials = None
         elif not credentials or not credentials.valid:
             if not os.path.exists(self.client_secrets_file):
                 raise FileNotFoundError(
                     f"OAuth client secrets file not found: {self.client_secrets_file}"
                 )
-            flow = InstalledAppFlow.from_client_secrets_file(
-                self.client_secrets_file, selected_scopes
-            )
+        if not credentials or not credentials.valid:
+            if not os.path.exists(self.client_secrets_file):
+                raise FileNotFoundError(
+                    f"OAuth client secrets file not found: {self.client_secrets_file}"
+                )
+            flow = InstalledAppFlow.from_client_secrets_file(self.client_secrets_file, selected_scopes)
             credentials = flow.run_local_server(port=0, open_browser=open_browser)
             with open(self.token_file, "w", encoding="utf-8") as token:
                 token.write(credentials.to_json())

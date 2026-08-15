@@ -27,15 +27,14 @@ class ElevenLabsHandler:
         if not self.api_key:
             raise ValueError("ELEVENLABS_API_KEY is not set.")
 
-    def _headers(self) -> Dict[str, str]:
-        return {
-            "xi-api-key": self.api_key,
-            "Accept": "audio/mpeg",
-            "Content-Type": "application/json",
-        }
-
     def _auth_headers(self) -> Dict[str, str]:
         return {"xi-api-key": self.api_key}
+
+    def _headers(self) -> Dict[str, str]:
+        headers = self._auth_headers()
+        headers["Accept"] = "audio/mpeg"
+        headers["Content-Type"] = "application/json"
+        return headers
 
     def list_voices(self) -> Dict[str, Any]:
         """List voices available on the ElevenLabs account."""
