@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: Optional[str] = None
     ELEVENLABS_API_KEY: Optional[str] = None
 
+    # Visual Assets
+    UNSPLASH_ACCESS_KEY: Optional[str] = None
+    PEXELS_API_KEY: Optional[str] = None
+
     # Video
     VIDEO_QUALITY: str = "1080p"
     VIDEO_BITRATE: str = "8000k"
