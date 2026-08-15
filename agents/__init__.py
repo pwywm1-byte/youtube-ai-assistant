@@ -280,7 +280,7 @@ class VideoEditingAgent(BaseAgent):
             images = []
             if isinstance(visuals_data, dict):
                 for img in visuals_data.get("generated_graphics", []):
-                    if isinstance(img, dict) and img.get("url") and img["url"].startswith("/"):
+                    if isinstance(img, dict) and img.get("url") and img["url"].startswith("http"):
                         images.append(img["url"])
 
             video = VideoService().compose_video(

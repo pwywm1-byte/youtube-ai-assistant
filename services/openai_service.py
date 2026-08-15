@@ -202,6 +202,8 @@ class OpenAIService:
                     continue
 
         if not topics:
-            topics = [{"title": f"Best {niche} trends 2024", "score": 80}]
+            from datetime import datetime as _dt
+            year = _dt.now().year
+            topics = [{"title": f"Best {niche} trends {year}", "score": 80}]
 
         return {"niche": niche, "topics": topics}
