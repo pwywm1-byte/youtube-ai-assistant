@@ -29,12 +29,27 @@ class Settings(BaseSettings):
     YOUTUBE_CLIENT_SECRET: Optional[str] = None
     YOUTUBE_CHANNEL_ID: Optional[str] = None
     YOUTUBE_REFRESH_TOKEN: Optional[str] = None
+    YOUTUBE_API_SERVICE_NAME: str = "youtube"
+    YOUTUBE_API_VERSION: str = "v3"
+
+    # Google Cloud
+    GOOGLE_CLOUD_PROJECT_ID: Optional[str] = None
+    GOOGLE_OAUTH_CLIENT_SECRETS_FILE: Optional[str] = None
+    GOOGLE_OAUTH_TOKEN_FILE: str = "token.json"
+    GOOGLE_SERVICE_ACCOUNT_FILE: Optional[str] = None
+    GOOGLE_OAUTH_SCOPES: str = (
+        "https://www.googleapis.com/auth/youtube.upload,"
+        "https://www.googleapis.com/auth/youtube.readonly,"
+        "https://www.googleapis.com/auth/youtube"
+    )
 
     # AI Services
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL: str = "gpt-4"
     ANTHROPIC_API_KEY: Optional[str] = None
     ELEVENLABS_API_KEY: Optional[str] = None
+    ELEVENLABS_VOICE_ID: Optional[str] = None
+    ELEVENLABS_MODEL_ID: str = "eleven_multilingual_v2"
 
     # Video
     VIDEO_QUALITY: str = "1080p"
