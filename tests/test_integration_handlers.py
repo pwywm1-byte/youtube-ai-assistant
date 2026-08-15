@@ -1,6 +1,7 @@
 """Focused tests for integration handlers and settings."""
 
 import os
+import tempfile
 import unittest
 from unittest import mock
 
@@ -46,6 +47,35 @@ class IntegrationHandlersTestCase(unittest.TestCase):
     def test_youtube_handler_channel_filter_for_handle(self):
         self.assertEqual(YouTubeHandler._channel_filters("@test_channel"), {"forHandle": "@test_channel"})
         self.assertEqual(YouTubeHandler._channel_filters("UC123"), {"id": "UC123"})
+
+    @mock.patch("elevenlabs_handler.requests.post")
+    def test_elevenlabs_text_to_speech_writes_output(self, mock_post):
+        mock_response = mock.Mock()
+        mock_response.content = b"audio-bytes"
+        mock_response.raise_for_status.return_value = None
+        mock_post.return_value = mock_response
+
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            output_path = tmp.name
+        try:
+            handler = ElevenLabsHandler(api_key="test-key", voice_id="voice-1")
+            handler.text_to_speech("hello world", output_path)
+
+            with open(output_path, "rb") as result:
+                self.assertEqual(result.read(), b"audio-bytes")
+        finally:
+            if os.path.exists(output_path):
+                os.remove(output_path)
+
+    def test_elevenlabs_text_to_speech_requires_voice_id(self):
+        handler = ElevenLabsHandler(api_key="test-key", voice_id=None)
+        with self.assertRaises(ValueError):
+            handler.text_to_speech("hello", "/tmp/test-audio.mp3")
+
+    def test_elevenlabs_text_to_speech_requires_text(self):
+        handler = ElevenLabsHandler(api_key="test-key", voice_id="voice-1")
+        with self.assertRaises(ValueError):
+            handler.text_to_speech("   ", "/tmp/test-audio.mp3")
 
 
 if __name__ == "__main__":
