@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 from typing import List, Optional
 
@@ -12,6 +13,8 @@ DEFAULT_SCOPES = [
     "https://www.googleapis.com/auth/youtube.readonly",
     "https://www.googleapis.com/auth/youtube",
 ]
+
+logger = logging.getLogger(__name__)
 
 
 class GoogleAuthManager:
@@ -67,13 +70,9 @@ class GoogleAuthManager:
                 credentials.refresh(Request())
                 with open(self.token_file, "w", encoding="utf-8") as token:
                     token.write(credentials.to_json())
-            except Exception:
+            except Exception as exc:
+                logger.warning("OAuth token refresh failed; re-running OAuth flow: %s", exc, exc_info=True)
                 credentials = None
-        elif not credentials or not credentials.valid:
-            if not os.path.exists(self.client_secrets_file):
-                raise FileNotFoundError(
-                    f"OAuth client secrets file not found: {self.client_secrets_file}"
-                )
         if not credentials or not credentials.valid:
             if not os.path.exists(self.client_secrets_file):
                 raise FileNotFoundError(
