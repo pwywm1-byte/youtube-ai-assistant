@@ -1,4 +1,4 @@
-"""Workflow module for content orchestration."""
+"""Workflow module initialization."""
 
 from .orchestrator import ContentOrchestrator
 
