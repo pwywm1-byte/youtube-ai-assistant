@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          # Install test/lint tools directly; skip heavy optional deps
+          pip install \
+            fastapi uvicorn pydantic pydantic-settings \
+            sqlalchemy requests \
+            google-auth google-auth-oauthlib google-api-python-client \
+            openai elevenlabs \
+            Pillow pydub python-dotenv pytz \
+            pytest pytest-asyncio pytest-cov \
+            black flake8
+
+      - name: Black formatting check
+        run: black --check .
+
+      - name: Flake8 lint
+        run: flake8 .
+
+      - name: Run tests
+        run: pytest tests/ -v --tb=short
+        env:
+          DEVELOPMENT_MODE: "false"

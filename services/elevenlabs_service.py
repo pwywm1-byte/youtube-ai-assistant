@@ -14,6 +14,7 @@ class ElevenLabsService:
         """Initialize ElevenLabs service."""
         try:
             from elevenlabs import ElevenLabs
+
             self.client = ElevenLabs(api_key=api_key)
             logger.info("ElevenLabs Service initialized")
         except ImportError:

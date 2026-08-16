@@ -84,9 +84,7 @@ class Settings(BaseSettings):
     ENABLE_FACT_CHECKING: bool = True
     ENABLE_QUALITY_CONTROL: bool = True
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = {"env_file": ".env", "case_sensitive": True}
 
 
 settings = Settings()
@@ -99,10 +97,10 @@ def setup_logging(level=None):
 
     logging.basicConfig(
         level=getattr(logging, level),
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
             logging.StreamHandler(),
-        ]
+        ],
     )
 
     # Create logs directory

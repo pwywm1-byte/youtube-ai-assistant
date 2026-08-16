@@ -120,9 +120,7 @@ Provide response as JSON:
             logger.error(f"Error generating SEO metadata: {str(e)}")
             return {"success": False, "error": str(e)}
 
-    def fact_check(
-        self, claims: List[str], research: Optional[Dict] = None
-    ) -> Dict[str, Any]:
+    def fact_check(self, claims: List[str], research: Optional[Dict] = None) -> Dict[str, Any]:
         """Fact-check claims in the script."""
         try:
             prompt = f"""Fact-check the following claims:
@@ -165,7 +163,9 @@ Provide response as JSON array."""
     def research_topic(self, topic: str, sources: List[str] = None) -> Dict[str, Any]:
         """Research a topic using GPT-4."""
         try:
-            sources_list = "YouTube, Google Trends, Reddit, News" if not sources else ", ".join(sources)
+            sources_list = (
+                "YouTube, Google Trends, Reddit, News" if not sources else ", ".join(sources)
+            )
 
             prompt = f"""Research the topic: {topic}
 

@@ -39,10 +39,7 @@ async def test_research(orchestrator):
 @pytest.mark.asyncio
 async def test_scriptwriting(orchestrator):
     """Test script writing agent."""
-    result = await orchestrator.script_agent.execute(
-        topic="AI",
-        video_type="long_form"
-    )
+    result = await orchestrator.script_agent.execute(topic="AI", video_type="long_form")
     assert result["success"]
     assert "script" in result
     assert "title" in result["script"]

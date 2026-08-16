@@ -16,11 +16,13 @@ logger = logging.getLogger(__name__)
 
 orchestrateur = ContentOrchestrator()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("🚀 YouTube AI Assistant starting...")
     yield
     logger.info("👋 Shutting down...")
+
 
 app = FastAPI(
     title="YouTube AI Assistant API",
@@ -37,6 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -47,10 +50,12 @@ async def root():
         "version": "1.0.0",
     }
 
+
 # Health check
 @app.get("/health")
 async def health():
     return {"status": "healthy", "service": "youtube-ai-assistant"}
+
 
 # Content Generation Endpoints
 @app.post("/api/v1/content/generate")
@@ -62,9 +67,9 @@ async def generate_content(
     try:
         if video_type not in ["short", "long_form", "both"]:
             raise HTTPException(status_code=400, detail="Invalid video_type")
-        
+
         logger.info(f"Starting content generation: {video_type}")
-        
+
         # Run in background if requested
         if background_tasks:
             background_tasks.add_task(orchestrateur.generate_complete_video, video_type)
@@ -80,12 +85,13 @@ async def generate_content(
         logger.error(f"Error generating content: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/api/v1/content/daily")
 async def generate_daily(background_tasks: BackgroundTasks = None):
     """Generate daily content (1 Short + 1 Long-form video)."""
     try:
         logger.info("Starting daily content generation")
-        
+
         if background_tasks:
             background_tasks.add_task(orchestrateur.generate_daily_content)
             return {
@@ -98,6 +104,7 @@ async def generate_daily(background_tasks: BackgroundTasks = None):
     except Exception as e:
         logger.error(f"Error generating daily content: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 # Agent Status Endpoints
 @app.get("/api/v1/agents/status")
@@ -119,7 +126,7 @@ async def get_agents_status():
             orchestrateur.upload_agent,
             orchestrateur.analytics_agent,
         ]
-        
+
         return {
             "success": True,
             "agents": [agent.get_status() for agent in agents],
@@ -127,6 +134,7 @@ async def get_agents_status():
     except Exception as e:
         logger.error(f"Error getting agents status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/v1/agents/{agent_name}/status")
 async def get_agent_status(agent_name: str):
@@ -147,17 +155,18 @@ async def get_agent_status(agent_name: str):
             "upload": orchestrateur.upload_agent,
             "analytics": orchestrateur.analytics_agent,
         }
-        
+
         agent = agent_map.get(agent_name)
         if not agent:
             raise HTTPException(status_code=404, detail=f"Agent '{agent_name}' not found")
-        
+
         return {"success": True, "agent": agent.get_status()}
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error getting agent status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 # Configuration Endpoints
 @app.get("/api/v1/config")
@@ -184,6 +193,7 @@ async def get_config():
         logger.error(f"Error getting config: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # System Endpoints
 @app.get("/api/v1/system/info")
 async def system_info():
@@ -209,6 +219,7 @@ async def system_info():
         logger.error(f"Error getting system info: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # Error handlers
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):
@@ -216,6 +227,7 @@ async def http_exception_handler(request, exc):
         status_code=exc.status_code,
         content={"success": False, "error": exc.detail},
     )
+
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
@@ -225,6 +237,8 @@ async def general_exception_handler(request, exc):
         content={"success": False, "error": "Internal server error"},
     )
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host=settings.API_HOST, port=settings.API_PORT)

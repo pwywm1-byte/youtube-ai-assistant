@@ -14,5 +14,5 @@ def test_settings_load():
 def test_settings_defaults():
     """Test default settings."""
     assert settings.LOG_LEVEL == "INFO"
-    assert settings.DEVELOPMENT_MODE == False
+    assert settings.DEVELOPMENT_MODE is False
     assert settings.VIDEO_QUALITY == "1080p"
