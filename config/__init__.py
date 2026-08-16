@@ -1,4 +1,4 @@
-"""Configuration module."""
+"""Config module."""
 
 from .settings import settings, setup_logging
 

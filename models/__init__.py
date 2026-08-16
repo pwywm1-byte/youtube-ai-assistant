@@ -1,8 +1,5 @@
-"""Database models."""
+"""Models module for database."""
 
-from .base import BaseModel, Base
-from .video import Video
-from .topic import Topic
-from .analytics import Analytics
+from .base import Base, BaseModel, init_db
 
-__all__ = ["BaseModel", "Base", "Video", "Topic", "Analytics"]
+__all__ = ["Base", "BaseModel", "init_db"]
