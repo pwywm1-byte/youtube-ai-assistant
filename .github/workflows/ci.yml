@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "copilot/**"]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install lint tools
+        run: pip install black==23.12.0 flake8==6.1.0
+      - name: Black format check
+        run: black --check --line-length 100 .
+      - name: Flake8 lint
+        run: flake8 --max-line-length 100 --extend-ignore E203,W503 .
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      OPENAI_API_KEY: ""
+      ELEVENLABS_API_KEY: ""
+      YOUTUBE_CLIENT_ID: ""
+      YOUTUBE_CLIENT_SECRET: ""
+      YOUTUBE_REFRESH_TOKEN: ""
+      DATABASE_URL: "sqlite:///test.db"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: python -m pytest tests/ -v --tb=short
