@@ -2,6 +2,7 @@
 
 import os
 import logging
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 from typing import Optional
 
@@ -84,7 +85,7 @@ class Settings(BaseSettings):
     ENABLE_FACT_CHECKING: bool = True
     ENABLE_QUALITY_CONTROL: bool = True
 
-    model_config = {"env_file": ".env", "case_sensitive": True}
+    model_config = ConfigDict(env_file=".env", case_sensitive=True)
 
 
 settings = Settings()

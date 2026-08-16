@@ -203,9 +203,17 @@ class ScriptwritingAgent(BaseAgent):
 
             script = {
                 "title": f"The Ultimate Guide to {topic}",
-                "hook": f"Did you know? Most people don't understand {topic}. In the next 60 seconds, I'll show you exactly why you should care...",
-                "content": f"Let's dive into {topic}. First, let's understand what it is. {topic} is...",
-                "outro": "Thanks for watching! If you found this valuable, please like and subscribe for more insights.",
+                "hook": (
+                    f"Did you know? Most people don't understand {topic}. "
+                    "In the next 60 seconds, I'll show you exactly why you should care..."
+                ),
+                "content": (
+                    f"Let's dive into {topic}. First, let's understand what it is. {topic} is..."
+                ),
+                "outro": (
+                    "Thanks for watching! If you found this valuable, "
+                    "please like and subscribe for more insights."
+                ),
                 "word_count": 2500,
                 "key_points": [
                     f"What is {topic}?",
