@@ -1,8 +1,6 @@
-"""Database models."""
+"""Models module initialization."""
 
-from .base import BaseModel, Base
-from .video import Video
-from .topic import Topic
-from .analytics import Analytics
+from .base import Base, BaseModel
+from .content import Topic, Script, Video, Metadata, Analytics, Credential
 
-__all__ = ["BaseModel", "Base", "Video", "Topic", "Analytics"]
+__all__ = ["Base", "BaseModel", "Topic", "Script", "Video", "Metadata", "Analytics", "Credential"]

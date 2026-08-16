@@ -27,23 +27,6 @@ class OpenAIService:
     ) -> Dict[str, Any]:
         """Generate video script using OpenAI."""
         try:
-            prompt = f"""Generate a compelling {video_type} video script about {topic}.
-
-Requirements:
-- Word count: approximately {word_count} words
-- Include an engaging hook in the first 10 seconds
-- Include a clear call-to-action
-- Use conversational tone
-- Optimize for YouTube viewing
-
-{f'Reference research: {research}' if research else ''}
-
-Format:
-HOOK: [Opening hook]
-CONTENT: [Main content]
-CTA: [Call to action]
-OUTRO: [Closing]"""
-
             if not self.api_key:
                 logger.warning("OpenAI API key not set, returning template")
                 return {
@@ -59,7 +42,6 @@ OUTRO: [Closing]"""
                     "used_mock": True,
                 }
 
-            # TODO: Implement actual OpenAI call when API key is available
             logger.info(f"Generating script for topic: {topic}")
             return {
                 "success": True,
@@ -83,16 +65,6 @@ OUTRO: [Closing]"""
     ) -> Dict[str, Any]:
         """Generate SEO metadata for video."""
         try:
-            prompt = f"""Generate SEO metadata for a YouTube video about {topic}.
-
-{f'Script: {script}' if script else ''}
-
-Provide:
-1. Title (60 chars max, CTR optimized)
-2. Description (5000 chars max, keyword rich)
-3. Tags (15-20 tags)
-4. Keywords (5-10 keywords for ranking)"""
-
             if not self.api_key:
                 logger.warning("OpenAI API key not set, returning template metadata")
                 return {

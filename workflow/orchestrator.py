@@ -1,7 +1,6 @@
-"""Content orchestrator that coordinates all agents."""
+"""Workflow orchestrator for content generation pipeline."""
 
 import logging
-import asyncio
 from typing import Dict, Any
 from agents import (
     TrendResearchAgent,
@@ -17,151 +16,204 @@ from agents import (
     QualityControlAgent,
     YouTubeUploadAgent,
     AnalyticsAgent,
+    OptimizationAgent,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class ContentOrchestrator:
-    """Orchestrate complete content generation workflow."""
+    """Orchestrates the entire content generation pipeline."""
 
     def __init__(self):
-        """Initialize orchestrator with all agents."""
-        self.trend_agent = TrendResearchAgent()
-        self.topic_agent = TopicSelectionAgent()
-        self.research_agent = ResearchAgent()
-        self.script_agent = ScriptwritingAgent()
-        self.fact_check_agent = FactCheckingAgent()
-        self.voice_agent = VoiceGenerationAgent()
-        self.visual_agent = VisualGenerationAgent()
-        self.video_agent = VideoEditingAgent()
-        self.thumbnail_agent = ThumbnailAgent()
-        self.seo_agent = SEOAgent()
-        self.quality_agent = QualityControlAgent()
-        self.upload_agent = YouTubeUploadAgent()
-        self.analytics_agent = AnalyticsAgent()
+        """Initialize all agents."""
+        self.trend_research = TrendResearchAgent()
+        self.topic_selection = TopicSelectionAgent()
+        self.research = ResearchAgent()
+        self.scriptwriting = ScriptwritingAgent()
+        self.fact_checking = FactCheckingAgent()
+        self.voice_generation = VoiceGenerationAgent()
+        self.visual_generation = VisualGenerationAgent()
+        self.video_editing = VideoEditingAgent()
+        self.thumbnail = ThumbnailAgent()
+        self.seo = SEOAgent()
+        self.quality_control = QualityControlAgent()
+        self.youtube_upload = YouTubeUploadAgent()
+        self.analytics = AnalyticsAgent()
+        self.optimization = OptimizationAgent()
 
-    async def generate_complete_video(self, video_type: str = "both") -> Dict[str, Any]:
-        """Generate complete video from research to upload.
+        logger.info("ContentOrchestrator initialized with 15 agents")
 
-        Args:
-            video_type: 'short', 'long_form', or 'both'
-
-        Returns:
-            Complete video generation result
-        """
-        logger.info(f"Starting content generation pipeline ({video_type})...")
+    async def generate_short_form(self, **kwargs) -> Dict[str, Any]:
+        """Generate short-form video (YouTube Short 30-60s)."""
+        logger.info("Starting short-form video generation...")
 
         try:
-            # Step 1: Research trends
-            logger.info("Step 1: Researching trends...")
-            trends = await self.trend_agent.execute()
+            trends_result = await self.trend_research.execute()
+            if not trends_result.get("success"):
+                return {"success": False, "error": "Trend research failed"}
 
-            # Step 2: Select best topic
-            logger.info("Step 2: Selecting topic...")
-            topic_result = await self.topic_agent.execute(trends=trends)
-            selected_topic = topic_result["selected_topics"][0]
+            topic_result = await self.topic_selection.execute(trends=trends_result)
+            if not topic_result.get("success"):
+                return {"success": False, "error": "Topic selection failed"}
 
-            # Step 3: Deep research
-            logger.info("Step 3: Researching topic...")
-            research = await self.research_agent.execute(topic=selected_topic["title"])
+            selected_topic = topic_result.get("selected_topics", [{}])[0].get("title")
 
-            # Step 4: Write script
-            logger.info("Step 4: Writing script...")
-            script = await self.script_agent.execute(
-                topic=selected_topic["title"],
-                research=research,
-                video_type=video_type,
+            research_result = await self.research.execute(topic=selected_topic)
+            if not research_result.get("success"):
+                return {"success": False, "error": "Research failed"}
+
+            script_result = await self.scriptwriting.execute(
+                topic=selected_topic,
+                research=research_result,
+                video_type="short",
+            )
+            if not script_result.get("success"):
+                return {"success": False, "error": "Script writing failed"}
+
+            script = script_result.get("script")
+
+            await self.fact_checking.execute(script=script, research=research_result)
+            voice_result = await self.voice_generation.execute(script=script)
+            if not voice_result.get("success"):
+                return {"success": False, "error": "Voice generation failed"}
+
+            visuals_result = await self.visual_generation.execute(
+                script=script,
+                topic=selected_topic,
+                video_type="short",
+            )
+            if not visuals_result.get("success"):
+                return {"success": False, "error": "Visual generation failed"}
+
+            video_result = await self.video_editing.execute(
+                visuals=visuals_result.get("visuals"),
+                audio=voice_result.get("audio"),
+                script=script,
+            )
+            if not video_result.get("success"):
+                return {"success": False, "error": "Video editing failed"}
+
+            thumbnail_result = await self.thumbnail.execute(
+                topic=selected_topic,
+                script=script,
+                visuals=visuals_result.get("visuals"),
             )
 
-            # Step 5: Fact check
-            logger.info("Step 5: Fact checking...")
-            fact_check = await self.fact_check_agent.execute(
-                script=script, research=research
+            seo_result = await self.seo.execute(
+                topic=selected_topic,
+                script=script,
+                research=research_result,
             )
 
-            if not fact_check["all_verified"]:
-                logger.warning("Some facts could not be verified!")
-
-            # Step 6: Generate voice
-            logger.info("Step 6: Generating voiceover...")
-            audio = await self.voice_agent.execute(script=script)
-
-            # Step 7: Generate visuals
-            logger.info("Step 7: Generating visuals...")
-            visuals = await self.visual_agent.execute(
-                script=script, topic=selected_topic["title"], video_type=video_type
+            qc_result = await self.quality_control.execute(
+                video=video_result.get("video"),
+                metadata=seo_result.get("metadata"),
             )
-
-            # Step 8: Edit video
-            logger.info("Step 8: Editing video...")
-            video = await self.video_agent.execute(
-                visuals=visuals, audio=audio, script=script
-            )
-
-            # Step 9: Generate thumbnail
-            logger.info("Step 9: Generating thumbnail...")
-            thumbnail = await self.thumbnail_agent.execute(
-                topic=selected_topic["title"], script=script, visuals=visuals
-            )
-
-            # Step 10: Optimize SEO
-            logger.info("Step 10: Optimizing SEO...")
-            metadata = await self.seo_agent.execute(
-                topic=selected_topic["title"], script=script, research=research
-            )
-
-            # Step 11: Quality control
-            logger.info("Step 11: Running quality control...")
-            quality_result = await self.quality_agent.execute(
-                video=video, metadata=metadata
-            )
-
-            if not quality_result["ready_to_publish"]:
-                logger.error("Video failed quality control!")
+            if not qc_result.get("ready_to_publish"):
                 return {"success": False, "error": "Quality control failed"}
 
-            # Step 12: Upload to YouTube
-            logger.info("Step 12: Uploading to YouTube...")
-            upload_result = await self.upload_agent.execute(
-                video_path=video["file_path"],
-                metadata=metadata,
-                thumbnail_path=thumbnail["file_path"],
-            )
-
-            logger.info(f"✅ Video generation complete! Video ID: {upload_result['video_id']}")
+            logger.info(f"✅ Short-form video generation complete for {selected_topic}")
 
             return {
                 "success": True,
+                "video_type": "short",
                 "topic": selected_topic,
-                "video": video,
-                "metadata": metadata,
-                "thumbnail": thumbnail,
-                "upload_result": upload_result,
+                "script": script,
+                "video": video_result.get("video"),
+                "thumbnail": thumbnail_result.get("thumbnail"),
+                "metadata": seo_result.get("metadata"),
+                "status": "ready_to_publish",
             }
 
         except Exception as e:
-            logger.error(f"❌ Error in content generation: {str(e)}")
+            logger.error(f"Error in short-form generation: {str(e)}")
             return {"success": False, "error": str(e)}
 
-    async def generate_daily_content(self):
-        """Generate 1 Short + 1 Long-form video daily."""
-        logger.info("🎬 Starting daily content generation...")
+    async def generate_long_form(self, **kwargs) -> Dict[str, Any]:
+        """Generate long-form video (15-25 minutes)."""
+        logger.info("Starting long-form video generation...")
 
         try:
-            # Generate Short
-            logger.info("Generating YouTube Short...")
-            short_result = await self.generate_complete_video(video_type="short")
+            trends_result = await self.trend_research.execute()
+            topic_result = await self.topic_selection.execute(trends=trends_result)
+            selected_topic = topic_result.get("selected_topics", [{}])[0].get("title")
 
-            # Generate Long-form
-            logger.info("Generating Long-form video...")
-            longform_result = await self.generate_complete_video(video_type="long_form")
+            research_result = await self.research.execute(topic=selected_topic)
+            script_result = await self.scriptwriting.execute(
+                topic=selected_topic,
+                research=research_result,
+                video_type="long_form",
+            )
+
+            script = script_result.get("script")
+
+            await self.fact_checking.execute(script=script, research=research_result)
+            voice_result = await self.voice_generation.execute(script=script)
+            visuals_result = await self.visual_generation.execute(
+                script=script,
+                topic=selected_topic,
+                video_type="long_form",
+            )
+            video_result = await self.video_editing.execute(
+                visuals=visuals_result.get("visuals"),
+                audio=voice_result.get("audio"),
+                script=script,
+            )
+            thumbnail_result = await self.thumbnail.execute(
+                topic=selected_topic,
+                script=script,
+                visuals=visuals_result.get("visuals"),
+            )
+            seo_result = await self.seo.execute(
+                topic=selected_topic,
+                script=script,
+                research=research_result,
+            )
+            qc_result = await self.quality_control.execute(
+                video=video_result.get("video"),
+                metadata=seo_result.get("metadata"),
+            )
+
+            logger.info(f"✅ Long-form video generation complete for {selected_topic}")
 
             return {
-                "success": all([short_result["success"], longform_result["success"]]),
-                "short": short_result,
-                "long_form": longform_result,
+                "success": True,
+                "video_type": "long_form",
+                "topic": selected_topic,
+                "script": script,
+                "video": video_result.get("video"),
+                "thumbnail": thumbnail_result.get("thumbnail"),
+                "metadata": seo_result.get("metadata"),
+                "status": "ready_to_publish",
             }
+
+        except Exception as e:
+            logger.error(f"Error in long-form generation: {str(e)}")
+            return {"success": False, "error": str(e)}
+
+    async def generate_daily_content(self, **kwargs) -> Dict[str, Any]:
+        """Generate daily content: 1 short + 1 long-form."""
+        logger.info("Starting daily content generation (1 Short + 1 Long-form)...")
+
+        try:
+            short_result = await self.generate_short_form()
+            long_result = await self.generate_long_form()
+
+            if short_result.get("success") and long_result.get("success"):
+                logger.info("✅ Daily content generation successful!")
+                return {
+                    "success": True,
+                    "short_form": short_result,
+                    "long_form": long_result,
+                }
+            else:
+                return {
+                    "success": False,
+                    "error": "One or more videos failed to generate",
+                    "short_form": short_result,
+                    "long_form": long_result,
+                }
 
         except Exception as e:
             logger.error(f"Error in daily content generation: {str(e)}")
