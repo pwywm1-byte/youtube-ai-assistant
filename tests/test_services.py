@@ -16,10 +16,7 @@ def test_thumbnail_creation(tmp_path):
     """Test thumbnail creation."""
     service = VideoService()
     output_path = str(tmp_path / "test_thumbnail.jpg")
-    result = service.create_thumbnail(
-        text="Test Video",
-        output_path=output_path
-    )
+    result = service.create_thumbnail(text="Test Video", output_path=output_path)
     assert result["success"]
     assert "file_path" in result
 

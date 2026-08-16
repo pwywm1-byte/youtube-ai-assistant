@@ -34,26 +34,25 @@ class OpenAIService:
                     research_context = json.dumps(research, indent=2)
 
             word_count = 2000 if video_type == "short" else 3500
+            video_format = "Short" if video_type == "short" else "long-form"
 
-            prompt = f"""Create a compelling video script for a YouTube {'Short' if video_type == 'short' else 'long-form'} video about: {topic}
-
-Tone: {tone}
-Target word count: ~{word_count} words
-
-Research context:
-{research_context}
-
-Provide the script in this JSON format:
-{{
-    "title": "Engaging video title",
-    "hook": "First 30 seconds to grab attention",
-    "content": "Main body of the script",
-    "outro": "Closing with call-to-action",
-    "key_points": ["point 1", "point 2", "point 3"],
-    "timestamps": {{"section": "MM:SS"}}
-}}
-
-Make it engaging, unique, and optimized for YouTube's algorithm."""
+            prompt = (
+                f"Create a compelling video script for a YouTube {video_format} "
+                f"video about: {topic}\n\n"
+                f"Tone: {tone}\n"
+                f"Target word count: ~{word_count} words\n"
+                f"Research context:\n{research_context}\n\n"
+                "Provide the script in this JSON format:\n"
+                "{\n"
+                '    "title": "Engaging video title",\n'
+                '    "hook": "First 30 seconds to grab attention",\n'
+                '    "content": "Main body of the script",\n'
+                '    "outro": "Closing with call-to-action",\n'
+                '    "key_points": ["point 1", "point 2", "point 3"],\n'
+                '    "timestamps": {"section": "MM:SS"}\n'
+                "}\n\n"
+                "Make it engaging, unique, and optimized for YouTube's algorithm."
+            )
 
             response = self.client.chat.completions.create(
                 model=self.model,
@@ -120,9 +119,7 @@ Provide response as JSON:
             logger.error(f"Error generating SEO metadata: {str(e)}")
             return {"success": False, "error": str(e)}
 
-    def fact_check(
-        self, claims: List[str], research: Optional[Dict] = None
-    ) -> Dict[str, Any]:
+    def fact_check(self, claims: List[str], research: Optional[Dict] = None) -> Dict[str, Any]:
         """Fact-check claims in the script."""
         try:
             prompt = f"""Fact-check the following claims:
@@ -165,7 +162,9 @@ Provide response as JSON array."""
     def research_topic(self, topic: str, sources: List[str] = None) -> Dict[str, Any]:
         """Research a topic using GPT-4."""
         try:
-            sources_list = "YouTube, Google Trends, Reddit, News" if not sources else ", ".join(sources)
+            sources_list = (
+                "YouTube, Google Trends, Reddit, News" if not sources else ", ".join(sources)
+            )
 
             prompt = f"""Research the topic: {topic}
 

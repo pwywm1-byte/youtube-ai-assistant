@@ -123,9 +123,17 @@ class TopicSelectionAgent(BaseAgent):
 
             selected_topics = [
                 {"title": "Latest AI Breakthroughs in 2024", "score": 95, "category": "tech"},
-                {"title": "How to Use ChatGPT for Productivity", "score": 92, "category": "tutorial"},
+                {
+                    "title": "How to Use ChatGPT for Productivity",
+                    "score": 92,
+                    "category": "tutorial",
+                },
                 {"title": "AI Tools That Will Change Your Life", "score": 88, "category": "tools"},
-                {"title": "The Future of Artificial Intelligence", "score": 85, "category": "analysis"},
+                {
+                    "title": "The Future of Artificial Intelligence",
+                    "score": 85,
+                    "category": "analysis",
+                },
                 {"title": "AI Safety and Ethics Explained", "score": 82, "category": "education"},
             ]
 
@@ -140,9 +148,7 @@ class ResearchAgent(BaseAgent):
     """Conduct deep research on topics."""
 
     def __init__(self):
-        super().__init__(
-            name="ResearchAgent", description="Deep research on selected topic"
-        )
+        super().__init__(name="ResearchAgent", description="Deep research on selected topic")
 
     async def execute(self, topic=None, **kwargs) -> Dict[str, Any]:
         self.log_execution("started")
@@ -183,9 +189,7 @@ class ScriptwritingAgent(BaseAgent):
             description="Generates original, engaging scripts",
         )
 
-    async def execute(
-        self, topic=None, research=None, video_type=None, **kwargs
-    ) -> Dict[str, Any]:
+    async def execute(self, topic=None, research=None, video_type=None, **kwargs) -> Dict[str, Any]:
         self.log_execution("started")
         try:
             ai = _get_openai_service()
@@ -199,9 +203,17 @@ class ScriptwritingAgent(BaseAgent):
 
             script = {
                 "title": f"The Ultimate Guide to {topic}",
-                "hook": f"Did you know? Most people don't understand {topic}. In the next 60 seconds, I'll show you exactly why you should care...",
-                "content": f"Let's dive into {topic}. First, let's understand what it is. {topic} is...",
-                "outro": "Thanks for watching! If you found this valuable, please like and subscribe for more insights.",
+                "hook": (
+                    f"Did you know? Most people don't understand {topic}. "
+                    "In the next 60 seconds, I'll show you exactly why you should care..."
+                ),
+                "content": (
+                    f"Let's dive into {topic}. First, let's understand what it is. {topic} is..."
+                ),
+                "outro": (
+                    "Thanks for watching! If you found this valuable, "
+                    "please like and subscribe for more insights."
+                ),
                 "word_count": 2500,
                 "key_points": [
                     f"What is {topic}?",
@@ -298,9 +310,7 @@ class VisualGenerationAgent(BaseAgent):
             description="AI-generated visuals + stock footage",
         )
 
-    async def execute(
-        self, script=None, topic=None, video_type=None, **kwargs
-    ) -> Dict[str, Any]:
+    async def execute(self, script=None, topic=None, video_type=None, **kwargs) -> Dict[str, Any]:
         self.log_execution("started")
         try:
             visuals = {
@@ -334,9 +344,7 @@ class VideoEditingAgent(BaseAgent):
             description="Composites video with transitions/effects",
         )
 
-    async def execute(
-        self, visuals=None, audio=None, script=None, **kwargs
-    ) -> Dict[str, Any]:
+    async def execute(self, visuals=None, audio=None, script=None, **kwargs) -> Dict[str, Any]:
         self.log_execution("started")
         try:
             video = {
@@ -358,13 +366,9 @@ class ThumbnailAgent(BaseAgent):
     """Design video thumbnails."""
 
     def __init__(self):
-        super().__init__(
-            name="ThumbnailAgent", description="Designs high-CTR thumbnails"
-        )
+        super().__init__(name="ThumbnailAgent", description="Designs high-CTR thumbnails")
 
-    async def execute(
-        self, topic=None, script=None, visuals=None, **kwargs
-    ) -> Dict[str, Any]:
+    async def execute(self, topic=None, script=None, visuals=None, **kwargs) -> Dict[str, Any]:
         self.log_execution("started")
         try:
             thumbnail = {
@@ -393,9 +397,7 @@ class SEOAgent(BaseAgent):
             description="Optimizes titles, descriptions, tags, keywords",
         )
 
-    async def execute(
-        self, topic=None, script=None, research=None, **kwargs
-    ) -> Dict[str, Any]:
+    async def execute(self, topic=None, script=None, research=None, **kwargs) -> Dict[str, Any]:
         self.log_execution("started")
         try:
             ai = _get_openai_service()
@@ -430,9 +432,7 @@ class QualityControlAgent(BaseAgent):
     """Quality assurance checks."""
 
     def __init__(self):
-        super().__init__(
-            name="QualityControlAgent", description="Pre-publish verification"
-        )
+        super().__init__(name="QualityControlAgent", description="Pre-publish verification")
 
     async def execute(self, video=None, metadata=None, **kwargs) -> Dict[str, Any]:
         self.log_execution("started")
@@ -502,9 +502,7 @@ class AnalyticsAgent(BaseAgent):
     """Track video performance."""
 
     def __init__(self):
-        super().__init__(
-            name="AnalyticsAgent", description="Tracks performance metrics"
-        )
+        super().__init__(name="AnalyticsAgent", description="Tracks performance metrics")
 
     async def execute(self, video_id=None, **kwargs) -> Dict[str, Any]:
         self.log_execution("started")

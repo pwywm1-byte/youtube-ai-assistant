@@ -14,6 +14,7 @@ class UnsplashService:
         """Initialize Unsplash service."""
         try:
             import requests
+
             self.requests = requests
             self.access_key = access_key
             self.base_url = "https://api.unsplash.com"

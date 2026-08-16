@@ -76,9 +76,7 @@ class ContentOrchestrator:
 
             # Step 5: Fact check
             logger.info("Step 5: Fact checking...")
-            fact_check = await self.fact_check_agent.execute(
-                script=script, research=research
-            )
+            fact_check = await self.fact_check_agent.execute(script=script, research=research)
 
             if not fact_check["all_verified"]:
                 logger.warning("Some facts could not be verified!")
@@ -95,9 +93,7 @@ class ContentOrchestrator:
 
             # Step 8: Edit video
             logger.info("Step 8: Editing video...")
-            video = await self.video_agent.execute(
-                visuals=visuals, audio=audio, script=script
-            )
+            video = await self.video_agent.execute(visuals=visuals, audio=audio, script=script)
 
             # Step 9: Generate thumbnail
             logger.info("Step 9: Generating thumbnail...")
@@ -113,9 +109,7 @@ class ContentOrchestrator:
 
             # Step 11: Quality control
             logger.info("Step 11: Running quality control...")
-            quality_result = await self.quality_agent.execute(
-                video=video, metadata=metadata
-            )
+            quality_result = await self.quality_agent.execute(video=video, metadata=metadata)
 
             if not quality_result["ready_to_publish"]:
                 logger.error("Video failed quality control!")

@@ -14,6 +14,7 @@ class PexelsService:
         """Initialize Pexels service."""
         try:
             import requests
+
             self.requests = requests
             self.api_key = api_key
             self.base_url = "https://api.pexels.com"
@@ -82,9 +83,7 @@ class PexelsService:
             logger.error(f"Error searching videos: {str(e)}")
             return {"success": False, "error": str(e)}
 
-    def search_images(
-        self, query: str, count: int = 5
-    ) -> Dict[str, Any]:
+    def search_images(self, query: str, count: int = 5) -> Dict[str, Any]:
         """Search for images on Pexels."""
         try:
             if not self.requests or not self.api_key:

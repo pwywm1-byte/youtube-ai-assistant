@@ -53,9 +53,7 @@ class YouTubeService:
                 self.credentials.refresh(Request())
                 logger.info("Refreshed YouTube token")
             elif not self.credentials:
-                logger.warning(
-                    "No YouTube token found. OAuth flow required on first use."
-                )
+                logger.warning("No YouTube token found. OAuth flow required on first use.")
 
             # Build service
             if self.credentials:
@@ -139,9 +137,7 @@ class YouTubeService:
                 return False
 
             media = MediaFileUpload(thumbnail_path, mimetype="image/jpeg")
-            self.youtube.thumbnails().set(
-                videoId=video_id, media_body=media
-            ).execute()
+            self.youtube.thumbnails().set(videoId=video_id, media_body=media).execute()
 
             logger.info(f"Thumbnail set for video: {video_id}")
             return True
@@ -155,11 +151,7 @@ class YouTubeService:
             if not self.youtube:
                 return {"success": True, "stats": {"views": 0, "likes": 0, "comments": 0}}
 
-            response = (
-                self.youtube.videos()
-                .list(part="statistics", id=video_id)
-                .execute()
-            )
+            response = self.youtube.videos().list(part="statistics", id=video_id).execute()
 
             if response["items"]:
                 stats = response["items"][0]["statistics"]
@@ -185,9 +177,7 @@ class YouTubeService:
             logger.error(f"Error publishing video: {str(e)}")
             return False
 
-    def create_playlist(
-        self, title: str, description: str = ""
-    ) -> Dict[str, Any]:
+    def create_playlist(self, title: str, description: str = "") -> Dict[str, Any]:
         """Create a new playlist."""
         try:
             if not self.youtube:
@@ -198,11 +188,7 @@ class YouTubeService:
                 "status": {"privacyStatus": "private"},
             }
 
-            response = (
-                self.youtube.playlists()
-                .insert(part="snippet,status", body=body)
-                .execute()
-            )
+            response = self.youtube.playlists().insert(part="snippet,status", body=body).execute()
 
             playlist_id = response["id"]
             logger.info(f"Playlist created: {playlist_id}")
@@ -217,7 +203,12 @@ class YouTubeService:
             if not self.youtube:
                 return True
 
-            body = {"snippet": {"playlistId": playlist_id, "resourceId": {"kind": "youtube#video", "videoId": video_id}}}
+            body = {
+                "snippet": {
+                    "playlistId": playlist_id,
+                    "resourceId": {"kind": "youtube#video", "videoId": video_id},
+                }
+            }
 
             self.youtube.playlistItems().insert(part="snippet", body=body).execute()
 

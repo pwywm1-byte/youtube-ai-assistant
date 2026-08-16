@@ -14,6 +14,7 @@ class VideoService:
         """Initialize video service."""
         try:
             from moviepy.editor import VideoFileClip, AudioFileClip, CompositeVideoClip
+
             self.moviepy_available = True
         except ImportError:
             self.moviepy_available = False
@@ -130,7 +131,9 @@ class VideoService:
             # Add text
             draw = ImageDraw.Draw(img)
             try:
-                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 60)
+                font = ImageFont.truetype(
+                    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 60
+                )
             except (OSError, FileNotFoundError):
                 font = ImageFont.load_default()
 

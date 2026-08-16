@@ -1,0 +1,13 @@
+[flake8]
+max-line-length = 100
+exclude = .git,__pycache__,*.egg-info,.tox
+# Ignore unused imports in service files (conditional imports used at runtime)
+per-file-ignores =
+    agents/__init__.py:F401,F841
+    api/main.py:F401
+    models/base.py:F401
+    models/content.py:F401
+    services/*.py:F401
+    test_run.py:F401
+    tests/*.py:F401
+    workflow/orchestrator.py:F401
