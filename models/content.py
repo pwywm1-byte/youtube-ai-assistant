@@ -32,7 +32,7 @@ class Script(BaseModel):
     outro = Column(Text)
     word_count = Column(Integer, default=0)
     seo_score = Column(Float, default=0.0)
-    metadata = Column(JSON)
+    content_metadata = Column(JSON)
 
 
 class Video(BaseModel):

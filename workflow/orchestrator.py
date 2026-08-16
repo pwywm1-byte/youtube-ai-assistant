@@ -170,7 +170,7 @@ class ContentOrchestrator:
                 script=script,
                 research=research_result,
             )
-            qc_result = await self.quality_control.execute(
+            await self.quality_control.execute(
                 video=video_result.get("video"),
                 metadata=seo_result.get("metadata"),
             )

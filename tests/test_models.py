@@ -1,7 +1,6 @@
 """Test database models."""
 
 from models import Topic, Script, Video, Metadata, Analytics, Credential
-from models.base import BaseModel
 
 
 def test_topic_model():

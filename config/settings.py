@@ -32,7 +32,10 @@ class Settings(BaseSettings):
     YOUTUBE_CLIENT_SECRET: Optional[str] = None
     YOUTUBE_CHANNEL_ID: Optional[str] = None
     YOUTUBE_REFRESH_TOKEN: Optional[str] = None
-    YOUTUBE_SCOPES: str = "https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly"
+    YOUTUBE_SCOPES: str = (
+        "https://www.googleapis.com/auth/youtube.upload"
+        " https://www.googleapis.com/auth/youtube.readonly"
+    )
 
     # AI Services
     OPENAI_API_KEY: Optional[str] = None
@@ -92,7 +95,7 @@ def setup_logging(level=None):
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
             logging.StreamHandler(),
-        ]
+        ],
     )
 
     # Create logs directory
